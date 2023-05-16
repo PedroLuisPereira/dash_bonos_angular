@@ -1,0 +1,12 @@
+.ver-bono .modal-dialog {
+  max-width: 1200px;
+}
+
+.ver {
+  color: #5E72E4;
+  cursor: pointer;
+}
+
+.recargar .btn:not(:last-child) {
+  margin-right: 3rem;
+}

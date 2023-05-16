@@ -1,0 +1,130 @@
+<!-- Main content -->
+<div class="main-content" id="panel">
+
+  <!-- Topnav -->
+  <nav class="navbar navbar-top navbar-expand navbar-dark bg-primary">
+  </nav>
+
+  <div class="header bg-primary pb-6">
+    <div class="container-fluid">
+      <div class="header-body">
+        <div class="row align-items-center py-4">
+          <div class="col-lg-10 col-10">
+          </div>
+          <div class="col-lg-2 col-2 text-right">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+   <!-- spinner -->
+   <div *ngIf="spinner == true" style="position: relative;">
+    <div style="position: absolute; left: 700px; top: 300px; z-index: 3;">
+      <sa-spinner-circular color="#4B76F1"></sa-spinner-circular>
+    </div>
+  </div>
+
+  <!-- Page content -->
+  <div class="container-fluid mt--6">
+    <div class="row">
+      <div class="col-2"></div>
+      <div class="col-8">
+
+        <div class="card">
+          <!-- Card header -->
+          <div class="card-header border-0">
+            <h3 class="mb-0">Solicitud de Bono</h3>
+          </div>
+
+          <div *ngIf="proceso" class="card-body">
+            <div class="container alert alert-primary alert-dismissible fade show" role="alert">
+              <span class="alert-text">Proceso terminado</span>
+            </div>
+          </div>
+
+          <div *ngIf="error !='' " class="card-body">
+            <div class="container alert alert-danger alert-dismissible fade show" role="alert">
+              <span class="alert-text"> {{ error }} </span>
+            </div>
+          </div>
+
+          <div *ngIf="exito">
+            <div class="card-body">
+              <div class="container">
+
+                <div class="container alert alert-primary alert-dismissible fade show" role="alert">
+                  <span class="alert-icon"><i class="ni ni-check-bold"></i></span>
+                  <span class="alert-text"> Por favor, describa el motivo de respuesta<span v-text="texto"></span> a la solicitud y de click en guardar
+                  </span>
+                </div>
+
+                <div class="row">
+                  <div class="col">
+                    <div class="form-group">
+                      <label class="form-control-label" for="input-name">Código de solicitud de bono</label>
+                      <input type="text" [ngModel]="solicitud.id" class="form-control form-control-alternative" readonly>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="form-group">
+                      <label class="form-control-label" for="input-name">La solicitud de bono será:</label>
+                      <input *ngIf="respuesta == 'Aprobada'" type="text" [ngModel]="respuesta"
+                        class="form-control bg-success text-secondary form-control-alternative" readonly>
+                      <input *ngIf="respuesta != 'Aprobada'" type="text" [ngModel]="respuesta"
+                        class="form-control bg-danger text-secondary form-control-alternative" readonly>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-6">
+                    <div class="form-group">
+                      <label class="form-control-label" for="input-name">Empleado</label>
+                      <input type="text" [ngModel]="empleado.nombre" class="form-control form-control-alternative" readonly>
+                    </div>
+                  </div>
+                  <div class="col-3">
+                    <div class="form-group">
+                      <label class="form-control-label" for="input-email">Fecha de solicitud</label>
+                      <input type="text" class="form-control form-control-alternative" [ngModel]="solicitud.fecha_solicitud"
+                        readonly>
+                    </div>
+                  </div>
+                  <div class="col-3">
+                    <div class="form-group">
+                      <label class="form-control-label" for="input-email">Fecha de uso</label>
+                      <input type="text" class="form-control form-control-alternative" [ngModel]="solicitud.fecha_uso" readonly>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group mt-3">
+                  <label class="form-control-label" for="input-email">Bono</label>
+
+                  <div class="form-group">
+                    <textarea [ngModel]="bono" class="form-control" readonly rows="3"></textarea>
+                  </div>
+                </div>
+
+                <hr class="my-3">
+                <div autocomplete="off">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-email">Observación de aprobación/rechazo</label>
+
+                    <div class="form-group">
+                      <textarea [(ngModel)]="observacion" required class="form-control" maxlength="1000" rows="3"></textarea>
+                    </div>
+                  </div>
+                  <button type="submit" (click)="create()" [disabled]="getDisable()" class="btn btn-primary">Guardar</button>
+                </div>
+                <br>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

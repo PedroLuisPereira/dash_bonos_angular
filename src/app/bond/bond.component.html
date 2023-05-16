@@ -1,0 +1,401 @@
+<div>
+  <!-- Sidenav -->
+  <nav class="sidenav navbar navbar-vertical fixed-left navbar-expand-xs navbar-light bg-white" id="sidenav-main">
+    <app-sidebar></app-sidebar>
+  </nav>
+
+  <!-- Main content -->
+  <div class="main-content" id="panel">
+
+    <!-- Nav -->
+    <app-nav></app-nav>
+
+    <!-- spinner -->
+    <div *ngIf="spinner == true" style="position: relative;">
+      <div style="position: absolute; left: 700px; top: 300px; z-index: 3;">
+        <sa-spinner-circular color="#4B76F1"></sa-spinner-circular>
+      </div>
+    </div>
+
+    <!-- buscador -->
+    <div class="header bg-primary pb-6">
+      <div class="container-fluid">
+        <div class="header-body">
+          <div class="row align-items-center py-4">
+
+            <div class="col-8 col-sm-8 col-md-8 col-lg-9">
+              <div>
+                <div class="input-group">
+                  <input type="search" class="form-control" [(ngModel)]="buscar" placeholder="Buscar" aria-label="Buscar" />
+                  <div class="input-group-append">
+                    <button class="btn btn-secondary" (click)="list()" type="submit">Buscar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-5 col-lg-2 text-right">
+              <button data-toggle="modal" data-target="#modal-default" (click)="cleanAll()" class="btn btn-neutral">Nuevo bono</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="container-fluid mt--6">
+      <div class="row">
+        <div class="col">
+          <div class="card">
+            <!-- Card header -->
+            <div class="card-header border-0">
+              <div class="row align-items-center">
+                <div class="col">
+                  <h3 class="mb-0">Bonos</h3>
+                </div>
+
+                <div class="col text-right">
+                  <button title="Recargar" (click)="refresh()" class="btn btn-sm btn-primary">
+                    <span class="btn-inner--icon"><i class="fa fa-refresh" aria-hidden="true"></i></span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Light table -->
+            <div class="table-responsive">
+              <table class="table align-items-center table-flush">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" class="sort" data-sort="name">Nombre</th>
+                    <th scope="col" class="sort" data-sort="budget">Descripción</th>
+                    <th scope="col" class="sort" data-sort="budget">Beneficio</th>
+                    <th scope="col" class="sort" data-sort="budget">Cantidad</th>
+                    <th scope="col" class="sort" data-sort="budget">Estado</th>
+                    <th scope="col" class="sort" data-sort="budget">Editar</th>
+                  </tr>
+                </thead>
+                <tbody class="list">
+                  <tr *ngFor="let item of data">
+                    <th scope="row">
+                      <div class="media align-items-center">
+                        <div class="media-body">
+                          <span (click)="edit(item.id)" data-toggle="modal" data-target="#modal-ver"
+                            class="ver name mb-0 text-sm">{{ item.nombre }}</span>
+                        </div>
+                      </div>
+                    </th>
+
+                    <td>
+                      <span class="badge badge-dot mr-4">
+                        <span class="status">{{ item.descripcion | slice:0:25 }}</span>
+                      </span>
+                    </td>
+
+                    <td>
+                      <span class="badge badge-dot mr-4">
+                        <span class="status">{{ item.beneficio }}</span>
+                      </span>
+                    </td>
+
+                    <td>
+                      <span class="badge badge-dot mr-4">
+                        <span class="status">{{ item.cantidad }}</span>
+                      </span>
+                    </td>
+
+                    <td>
+                      <span *ngIf="item.status == 'Activo'" class="badge badge-success">Activo</span>
+                      <span *ngIf="item.status != 'Activo'" class="badge badge-danger">Inactivo</span>
+                    </td>
+
+                    <td>
+                      <button (click)="edit(item.id)" data-toggle="modal" data-target="#modal-edit"
+                        title="Editar registro" class="btn btn-warning btn-sm">
+                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+          <!-- si existen registros		 -->
+          <div *ngIf="data.length === 0" class="alert alert-primary" role="alert">
+            No existen registrados.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ver -->
+    <div class="row">
+      <div class="col-md-4">
+        <div class="modal ver-bono  fade" id="modal-ver" tabindex="-1" role="dialog" aria-labelledby="modal-default"
+          aria-hidden="true">
+          <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h6 class="modal-title" id="modal-title-default">
+                  {{ item.nombre }}
+                </h6>
+                <button type="button" title="Cerrar modal" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+
+              <div class="modal-body">
+
+                <div>
+                  <div>
+                    <img class="border mx-auto d-block " [src]="item.imagen" [alt]="item.nombre">
+                  </div>
+
+                  <div class="mt-3 ">
+
+                    <div class="form-group">
+                      <label class="form-control-label">Nombre</label>
+                      <input type="text" [ngModel]="item.nombre" class="form-control form-control-alternative" readonly>
+                    </div>
+
+                    <div class="row mt-3">
+
+                      <div class="col-3">
+                        <div class="form-group">
+                          <label class="form-control-label">Beneficio</label>
+                          <input type="email" [ngModel]="item.beneficio" class="form-control form-control-alternative"
+                            readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-3">
+
+                        <div class="form-group">
+                          <label class="form-control-label">Cantidad</label>
+                          <input type="email" [ngModel]="item.cantidad" class="form-control form-control-alternative"
+                            readonly>
+                        </div>
+
+                      </div>
+
+                      <div class="col-3">
+                        <div class="form-group">
+                          <label class="form-control-label">Categoría</label>
+                          <input type="text" [ngModel]="item.categoria" class="form-control form-control-alternative"
+                            readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-3">
+                        <div class="form-group">
+                          <label class="form-control-label">Estado</label>
+                          <input type="email" [ngModel]="item.status" class="form-control form-control-alternative"
+                            readonly>
+                        </div>
+                      </div>
+                    </div>
+
+
+                    <div class="form-group mt-3">
+                      <label class="form-control-label">Descripción</label>
+                      <textarea class="form-control" [ngModel]="item.descripcion" id="exampleFormControlTextarea1"
+                        readonly rows="3"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button id="closeModalCreate" [hidden]="true" data-toggle="modal" data-target="#modal-default" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button id="closeModalEdit" [hidden]="true" data-toggle="modal" data-target="#modal-edit" class="btn btn-default" data-dismiss="modal">Close</button>
+
+    <!-- nuevo -->
+    <div class="row">
+      <div class="col-md-4">
+        <div class="modal fade" id="modal-default" tabindex="-1" role="dialog" aria-labelledby="modal-default"
+          aria-hidden="true">
+          <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h6 class="modal-title" id="modal-title-default">
+                  Nuevo bono
+                </h6>
+                <button type="button" title="Cerrar modal" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+
+              <div class="modal-body">
+                <div enctype="multipart/form-data" autocomplete="off">
+                  <div class="pl-lg-4">
+                    <div class="form-group">
+                      <label class="form-control-label">Nombre</label>
+                      <input type="text" [(ngModel)]="nombre" class="form-control form-control-alternative"
+                        placeholder="Nombre" required [ngClass]="{ 'border border-danger': isNombre }" />
+                      <p class="text-danger">{{ errorNombre }}</p>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-control-label">Descripción</label>
+                      <input type="text" [(ngModel)]="descripcion" class="form-control form-control-alternative"
+                        placeholder="Descripción" required />
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-control-label">Beneficio</label>
+                      <input type="text" [(ngModel)]="beneficio" class="form-control form-control-alternative"
+                        placeholder="Beneficio" required>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-control-label">Cantidad</label>
+                      <input type="number" [(ngModel)]="cantidad" class="form-control form-control-alternative"
+                        placeholder="Cantidad" required>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-control-label" for="input-email">Categoría</label>
+                      <div class="form-group">
+                        <select [(ngModel)]="categoria" required class="form-control">
+                          <option value="">---Seleccionar---</option>
+                          <option value="Beneficios orientados al colaborador y su familia">
+                            Beneficios orientados al colaborador y su familia</option>
+                          <option value="Beneficios orientados al colaborador">Beneficios
+                            orientados al colaborador</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-control-label">Imagen del bono</label>
+                      <div class="custom-file">
+                        <input type="file" name="imagen" (change)="uploadImage($event)" required  class="custom-file-input" lang="en">
+                        <label class="custom-file-label" for="customFileLang">Select file</label>
+                      </div>
+                      <small> Max. 1MB con extensión .jpg .jpeg .png .webp </small>
+                      <p class="text-danger">{{ errorFile }}</p>
+                    </div>
+
+                    <div class="">
+                      <button type="reset" (click)="cleanAll()" data-dismiss="modal" aria-label="Close" class="btn btn-secondary mt-4">Cancelar</button>
+                      <button type="submit" (click)="create()" [disabled]="getDisable()" class="btn btn-primary mt-4">Guardar</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- editar -->
+    <div class="row">
+      <div class="col-md-4">
+        <div class="modal fade" id="modal-edit" tabindex="-1" role="dialog" aria-labelledby="modal-default"
+          aria-hidden="true">
+          <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h6 class="modal-title" id="modal-title-default">
+                  Editar bono
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+
+              <div class="modal-body">
+
+                <div enctype="multipart/form-data" autocomplete="off">
+                  <div class="pl-lg-4">
+                    <div class="form-group">
+                      <label class="form-control-label">Nombre</label>
+                      <input type="text" [(ngModel)]="nombre" class="form-control form-control-alternative"
+                        placeholder="Nombre" required [ngClass]="{ 'border border-danger': isNombre }" autofocus />
+                      <p class="text-danger">{{ errorNombre }}</p>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-control-label">Descripción</label>
+                      <textarea v-model="descripcion" placeholder="Descripción"
+                      [(ngModel)]="descripcion" class="form-control form-control-alternative" id="" cols="30" rows="5" required>
+                      </textarea>
+
+                    </div>
+
+                    <div class="row mt-3">
+                      <div class="col-6">
+                        <div class="form-group">
+                          <label class="form-control-label">Cantidad</label>
+                          <input type="number" [(ngModel)]="cantidad" class="form-control form-control-alternative"  placeholder="Cantidad" required>
+                        </div>
+
+                      </div>
+
+                      <div class="col-6">
+                        <div class="form-group">
+                          <label class="form-control-label" for="input-email">Categoría</label>
+                          <div class="form-group">
+                            <select [(ngModel)]="categoria" required class="form-control">
+                              <option value="">---Seleccionar---</option>
+                              <option value="Beneficios orientados al colaborador y su familia">
+                                Beneficios orientados al colaborador y su familia
+                              </option>
+                              <option value="Beneficios orientados al colaborador">
+                                Beneficios  orientados al colaborador
+                              </option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row mt-3">
+
+                      <div class="col-6">
+                        <div class="form-group">
+                          <label class="form-control-label" for="input-email">Estado</label>
+                          <div class="form-group">
+                            <select [(ngModel)]="status" required class="form-control">
+                              <option value="Activo">Activo</option>
+                              <option value="Inactivo">Inactivo</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-6">
+                        <div class="form-group">
+                          <label class="form-control-label">Imagen del bono</label>
+                          <div class="custom-file">
+                            <input type="file" name="imagen" (change)="uploadImage($event)" class="custom-file-input" lang="en">
+                            <label class="custom-file-label" for="customFileLang">Select file</label>
+                          </div>
+                          <small> Max. 1MB con extensión .jpg .jpeg .png .webp </small>
+                          <p class="text-danger">{{ errorFile }}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="">
+                      <button type="reset" (click)="cleanAll()" data-dismiss="modal" aria-label="Close" class="btn btn-secondary mt-4">Cancelar</button>
+                      <button type="submit" (click)="update()" [disabled]="getDisableUpdate()" class="btn btn-primary mt-4">Guardar</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

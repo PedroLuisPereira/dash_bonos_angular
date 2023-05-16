@@ -1,0 +1,203 @@
+<div>
+  <!-- spinner -->
+  <!-- <div class="spinner" v-if="spinner">
+    <SpinnerVue message="Loading..."></SpinnerVue>
+  </div> -->
+
+  <!-- Sidenav -->
+  <nav class="sidenav navbar navbar-vertical fixed-left navbar-expand-xs navbar-light bg-white" id="sidenav-main">
+    <app-sidebar></app-sidebar>
+  </nav>
+
+  <!-- Main content -->
+  <div class="main-content" id="panel">
+
+    <!-- Nav -->
+    <app-nav></app-nav>
+
+
+    <div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
+      <div class="container-fluid">
+        <div class="header-body">
+          <!-- Card stats -->
+          <div class="row">
+            <div class="col-xl-3 col-lg-6">
+              <div class="card card-stats mb-4 mb-xl-0">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="card-title text-uppercase text-muted mb-0">
+                        Total bonos
+                      </h5>
+                      <span class="h2 font-weight-bold mb-0">{{ bonos }}</span>
+                    </div>
+                    <div class="col-auto">
+                      <div class="icon icon-shape bg-danger text-white rounded-circle shadow">
+                        <i class="ni ni-bag-17 text-white"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-3 col-lg-6">
+              <div class="card card-stats mb-4 mb-xl-0">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="card-title text-uppercase text-muted mb-0">
+                        Solicitudes de bonos aprobadas
+                      </h5>
+                      <span class="h2 font-weight-bold mb-0">{{ bonosAprobados }}</span>
+                    </div>
+                    <div class="col-auto">
+                      <div class="icon icon-shape bg-warning text-white rounded-circle shadow">
+                        <i class="ni ni-check-bold"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-3 col-lg-6">
+              <div class="card card-stats mb-4 mb-xl-0">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="card-title text-uppercase text-muted mb-0">
+                        Bonos pendientes de aprobación
+                      </h5>
+                      <span class="h2 font-weight-bold mb-0">{{ bonosPendientes }}</span>
+                    </div>
+                    <div class="col-auto">
+                      <div class="icon icon-shape bg-info text-white rounded-circle shadow">
+                        <i class="ni ni-bell-55"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-3 col-lg-6">
+              <div class="card card-stats mb-4 mb-xl-0">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="card-title text-uppercase text-muted mb-0">
+                        Empleados
+                      </h5>
+                      <span class="h2 font-weight-bold mb-0">{{ empleados }}</span>
+                    </div>
+                    <div class="col-auto">
+                      <div class="icon icon-shape bg-yellow text-white rounded-circle shadow ">
+                        <i class="fas fa-users"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row mt-5">
+        <div class="col">
+          <div class="card shadow">
+            <div class="card-header border-0">
+              <div class="row align-items-center">
+                <div class="col">
+                  <h3 class="mb-0">Solicitudes de bonos pendientes de aprobación</h3>
+                </div>
+
+                <div class="col text-right">
+                  <button title="Recargar" class="btn btn-sm btn-primary">
+                    <span class="btn-inner--icon"><i class="fa fa-refresh" aria-hidden="true"></i></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <!-- Projects table -->
+              <table class="table align-items-center table-flush">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col">Empleado</th>
+                    <th scope="col">Bono</th>
+                    <th scope="col">Jefe</th>
+                    <th scope="col">Compañía</th>
+                    <th scope="col">fecha de solicitud</th>
+                    <th scope="col">Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of solicitudes">
+                    <th scope="row">{{ item.empleado.nombre }}</th>
+                    <td>{{ item.bono.nombre }}</td>
+                    <td>{{ item.jefe.nombre}}</td>
+                    <td>{{ item.empleado.linea.company.nombre }}</td>
+                    <td>{{ item.fecha_solicitud }}</td>
+                    <td>
+                      <span class="badge badge-primary">Pendiente</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+            </div>
+
+
+
+
+
+
+            <!-- Pagination -->
+            <div class="card-footer py-4">
+              <nav aria-label="...">
+                <ul class="pagination justify-content-end mb-0">
+                  <li class="page-item">
+                    <button (click)="list(prev)" class="page-link" tabindex="-1">
+                      <i class="fas fa-angle-left"></i>
+                      <span class="sr-only">Previous</span>
+                    </button>
+                  </li>
+
+                  <ng-template ngFor let-elemento [ngForOf]="rango" let-index="index">
+
+                    <li *ngIf="index + inicio == current_page" class="page-item active">
+                      <button (click)="list(index + inicio)" class="page-link">
+                        {{ index + inicio }}
+                      </button>
+                    </li>
+
+                    <li *ngIf="index + inicio != current_page" class="page-item">
+                      <button (click)="list(index + inicio)" class="page-link">
+                        {{ index + inicio }}
+                      </button>
+                    </li>
+
+                  </ng-template>
+
+                  <li class="page-item">
+                    <button (click)="list(next)" class="page-link">
+                      <i class="fas fa-angle-right"></i>
+                      <span class="sr-only">Next</span>
+                    </button>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+
+          <!-- si existen registros		 -->
+          <div *ngIf="solicitudes.length === 0" class="alert alert-primary" role="alert">
+            No existen registrados.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

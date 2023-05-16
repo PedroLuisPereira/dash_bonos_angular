@@ -1,0 +1,20 @@
+.modal-dialog {
+  max-width: 700px;
+}
+
+.ver-bono .modal-dialog {
+  max-width: 900px;
+}
+
+.ver-bono img {
+  max-width: 350px;
+}
+
+.modal-header {
+  padding-bottom: 0px;
+}
+
+.ver {
+  color: #5E72E4;
+  cursor: pointer;
+}

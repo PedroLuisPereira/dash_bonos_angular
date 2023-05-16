@@ -1,0 +1,195 @@
+<div>
+
+  <!-- Sidenav -->
+  <nav class="sidenav navbar navbar-vertical fixed-left navbar-expand-xs navbar-light bg-white" id="sidenav-main">
+    <app-sidebar></app-sidebar>
+  </nav>
+
+  <!-- Main content -->
+  <div class="main-content" id="panel">
+
+    <!-- Nav -->
+   <app-nav></app-nav>
+
+    <!-- buscador -->
+    <div class="header bg-primary pb-6">
+      <div class="container-fluid">
+        <div class="header-body">
+          <div class="row align-items-center py-4">
+
+            <div class="col-12 col-sm-2 col-lg-2 ">
+              <!-- <router-link to="/empleados" class="btn btn-neutral">Atrás</router-link> -->
+            </div>
+
+            <div class="col-12 col-lg-2  text-right">
+              <label class="form-control-label text-secondary">Buscar por estado del bono</label>
+            </div>
+
+            <div class="col-12 col-lg-4 ">
+              <form v-on:submit.prevent="list()">
+                <div class="input-group">
+                  <select v-model="status" required class="form-control">
+                    <option value="disponibles">Bonos disponibles</option>
+                    <option value="pendientes">Solicitudes de bonos pendientes de aprobación
+                    </option>
+                    <option value="aprobadas">Solicitudes de bonos aprobadas</option>
+                    <option value="rechazadas">Solicitudes de bonos rechazadas</option>
+                  </select>
+                  <div class="input-group-append">
+                    <button class="btn btn-secondary" type="submit">
+                      Buscar
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <div class="col-12 col-lg-1">
+              <button title="Recargar" v-on:click="list(0)" class="btn btn-icon btn-2 btn-neutral"
+                type="button">
+                <span class="btn-inner--icon"><i class="fa fa-refresh"
+                    aria-hidden="true"></i></span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="container-fluid mt--5">
+      <div class="card">
+        <!-- Card header -->
+        <div class="card-header border-0">
+          <h3 class="mb-0">{{empleado}}</h3>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <!-- si existen registros		 -->
+          <div v-if="datos" class="alert alert-primary" role="alert">
+            No existen registrados.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="contenedor" >
+      <div class="row">
+        <div *ngFor="let item of data" class="col-12 col-sm-12 col-md-6 col-lg-4">
+            <div class="card" data-toggle="modal" v-on:click="getBond(item)" data-target="#modal-ver" style="width: 18rem;">
+              <img class="card-img-top" [src]="item.imagen" alt="Card image cap">
+              <div class="card-body">
+                <h5 v-if="unit" class="card-title">Cantidades disponibles: {{ item.cantidad }}</h5>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ver -->
+    <div class="row">
+      <div class="col-md-4">
+        <div class="modal nuevo fade" id="modal-ver" tabindex="-1" role="dialog"
+          aria-labelledby="modal-default" aria-hidden="true">
+          <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+            <div class="modal-content">
+
+              <div class="modal-body">
+
+                <button type="button" title="Cerrar modal" class="close" data-dismiss="modal"
+                  aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+
+                <div class="pl-lg-4 mt-3 ">
+
+                  <div v-if="unit == false" >
+                    <h6 class="modal-title" id="modal-title-default">Solicitud</h6>
+
+                    <div  class="row mt-3">
+                      <div class="col-3">
+                        <div class="form-group">
+                          <label class="form-control-label">Jefe</label>
+                          <input type="email" v-model="solicitud.jefe"	class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-3">
+                        <div class="form-group">
+                          <label class="form-control-label">Fecha de solicitud</label>
+                          <input type="email" v-model="solicitud.fecha_solicitud"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-3">
+                        <div class="form-group">
+                          <label class="form-control-label">Fecha de uso</label>
+                          <input type="email" v-model="solicitud.fecha_uso"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-3">
+                        <div class="form-group">
+                          <label class="form-control-label">Fecha de revisión</label>
+                          <input type="email" v-model="solicitud.fecha_aprobacion"	class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+                    </div>
+                    <hr class="my-3">
+                  </div>
+
+
+                  <h6 class="modal-title" id="modal-title-default">Bono</h6>
+                  <div class="row mt-3">
+
+
+                    <div class="col-4">
+                      <div class="form-group">
+                        <label class="form-control-label">Nombre del bono</label>
+                        <input type="text" v-model="nombre" class="form-control form-control-alternative" readonly>
+                      </div>
+                    </div>
+
+                    <div class="col-4">
+                      <div class="form-group">
+                        <label class="form-control-label">Beneficio</label>
+                        <input type="email" v-model="beneficio"	class="form-control form-control-alternative" readonly>
+                      </div>
+                    </div>
+
+
+                    <div class="col-4">
+                      <div class="form-group">
+                        <label class="form-control-label">Compañia</label>
+                        <input type="email" v-model="company_nombre"	class="form-control form-control-alternative" readonly>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-control-label">Categoría</label>
+                    <input type="text" v-model="categoria"  class="form-control form-control-alternative"
+                      readonly>
+                  </div>
+
+                  <div class="form-group mt-3">
+                    <label class="form-control-label">Descripción</label>
+                    <input class="form-control" v-model="descripcion"  readonly>
+                  </div>
+
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

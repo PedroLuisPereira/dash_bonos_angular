@@ -1,0 +1,80 @@
+<div>
+  <!-- Sidenav -->
+  <nav class="sidenav navbar navbar-vertical  fixed-left  navbar-expand-xs navbar-light  bg-white" id="sidenav-main">
+    <app-sidebar></app-sidebar>
+  </nav>
+
+  <!-- Main content -->
+  <div class="main-content" id="panel">
+
+    <!-- Nav -->
+    <app-nav></app-nav>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="panel border p-4 m-4" id="chat">
+          <div class="panel-heading">
+            <h3 class="panel-title">
+              <i class="icon wb-chat-text" aria-hidden="true"></i> Chat con : {{empleado}}
+            </h3>
+          </div>
+          <div class="panel-body">
+            <div class="chats">
+
+              <div *ngFor="let item of chats">
+
+
+                <!-- chat admin  -->
+                <div *ngIf="item.de =='Admin' " class="chat">
+                  <div class="chat-avatar">
+                    <img src="https://bootdey.com/img/Content/avatar/avatar1.png" style="max-width: 30px;"
+                      class="rounded-circle" alt="...">
+                  </div>
+                  <div class="chat-body">
+                    <div class="chat-content" style="max-width: 70%;">
+                      <p>
+                        {{ item.mensaje }}
+                      </p>
+                      <time class="chat-time" datetime="2015-07-01T11:37">{{ getFecha(item.fecha) }} </time>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- chat empleado -->
+                <div *ngIf="item.de !='Admin'" class="chat chat-left">
+                  <div class="chat-avatar">
+                    <img src="https://bootdey.com/img/Content/avatar/avatar2.png" style="max-width: 30px;"
+                      class="rounded-circle" alt="...">
+                  </div>
+                  <div class="chat-body">
+                    <div class="chat-content" style="max-width: 70%;">
+                      <p>
+                        {{ item.mensaje }}
+                      </p>
+                      <time class="chat-time" datetime="2015-07-01T11:39">{{ getFecha(item.fecha) }}</time>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+
+            </div>
+          </div>
+          <div class="panel-footer">
+            <div class="row g-3" style="margin-top: 5px;">
+              <div class="col-11">
+                <input type="text" style="margin-top: 33px;" [(ngModel)]="mensaje" class="form-control"    id="inputPassword2" placeholder="Chat">
+              </div>
+
+              <div class="col-1">
+                <button type="submit" style="margin-top: 34px;" (click)="create()"
+                  class="btn btn-primary mb-3">Enviar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

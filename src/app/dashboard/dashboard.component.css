@@ -1,0 +1,18 @@
+.openbtn {
+  font-size: 20px;
+  cursor: pointer;
+  background-color: #5e72e4;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+}
+
+.openbtn:hover {
+  background-color: #5e72e4;
+}
+
+@media only screen and (min-width: 1200px) {
+  .openbtn {
+    display: none;
+  }
+}

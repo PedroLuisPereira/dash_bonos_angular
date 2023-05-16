@@ -1,0 +1,66 @@
+<div>
+  <!-- <a href="javascript:void(0)" class="closebtn" v-on:click="closeNav()">×</a> -->
+  <div class="scrollbar-inner">
+    <!-- Brand -->
+    <div class="sidenav-header align-items-center">
+      <a class="navbar-brand" href="javascript:void(0)">
+        <img src="/assets/img/theme/logo.png" class="navbar-brand-img" alt="..." />
+      </a>
+    </div>
+    <div class="navbar-inner">
+      <!-- Collapse -->
+      <div class="collapse navbar-collapse" id="sidenav-collapse-main">
+        <!-- Nav items -->
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">
+              <i class="ni ni-laptop text-primary"></i> Dashboard
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a routerLink="/companias" routerLinkActive="active" class="nav-link">
+              <i class="ni ni-world-2 text-primary"></i> Compañías
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a routerLink="/lineas" routerLinkActive="active" class="nav-link">
+              <i class="ni ni-bullet-list-67 text-primary"></i> Unidades de
+              negocio
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a routerLink="/empleados" routerLinkActive="active" class="nav-link">
+              <i class="ni ni-badge text-blue"></i> Empleados
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a routerLink="/bonos" routerLinkActive="active" class="nav-link">
+              <i class="ni ni-bag-17 text-blue"></i> Bonos
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a routerLink="/solicitudes" routerLinkActive="active" class="nav-link">
+              <i class="ni ni-single-copy-04 text-blue"></i> Solicitudes de
+              bonos
+            </a>
+          </li>
+        </ul>
+
+        <hr class="my-3" />
+
+        <ul *ngIf="isAdmin" class="navbar-nav">
+          <li class="nav-item">
+            <a routerLink="/usuarios" routerLinkActive="active" class="nav-link">
+              <i class="ni ni-single-02 text-blue"></i> Usuarios
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

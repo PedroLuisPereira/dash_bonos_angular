@@ -1,0 +1,637 @@
+<div>
+  <!-- Sidenav -->
+  <nav class="sidenav navbar navbar-vertical fixed-left navbar-expand-xs navbar-light bg-white" id="sidenav-main">
+    <app-sidebar></app-sidebar>
+  </nav>
+
+  <!-- Main content -->
+  <div class="main-content" id="panel">
+
+    <!-- Nav -->
+    <app-nav></app-nav>
+
+    <!-- spinner -->
+    <div *ngIf="spinner == true" style="position: relative;">
+      <div style="position: absolute; left: 700px; top: 300px; z-index: 3;">
+        <sa-spinner-circular color="#4B76F1"></sa-spinner-circular>
+      </div>
+    </div>
+
+    <!-- buscador -->
+    <div class="header bg-primary pb-6">
+      <div class="container-fluid">
+        <div class="header-body">
+          <div>
+
+            <div class="row align-items-center py-2">
+              <div class="col-11">
+
+                <div class="row">
+                  <div class="col-md-2">
+                    <label class="form-control-label text-secondary">Fecha inicial</label>
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-control-label text-secondary">Fecha final</label>
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-control-label text-secondary">Estado</label>
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-control-label text-secondary">Compañía</label>
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-control-label text-secondary">Cédula empleado</label>
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-control-label text-secondary">Cédula jefe</label>
+                  </div>
+                </div>
+
+
+                <div class="row">
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <input type="date" [(ngModel)]="fecha_inicio" class="form-control form-control-alternative">
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <input type="date" [(ngModel)]="fecha_fin" class="form-control form-control-alternative" />
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <select [(ngModel)]="status" class="form-control">
+                        <option value="">Todos</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Aprobada">Aprobada</option>
+                        <option value="Rechazada">Rechazada</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <select [(ngModel)]="company" class="form-control">
+                        <option value="">Todas</option>
+                        <option *ngFor="let item of companies" [value]="item.nombre">
+                          {{ item.nombre }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <input type="search" [(ngModel)]="cedula" class="form-control form-control-alternative"
+                        placeholder="Cédula del empleado" />
+                    </div>
+                  </div>
+
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <input type="search" [(ngModel)]="cedula_jefe" class="form-control form-control-alternative"
+                        placeholder="Cédula del jefe" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-1">
+                <br>
+                <div class="mt-1 form-group">
+                  <button type="submit" (click)="list(1)" class="btn btn-secondary">Buscar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row py-2">
+            <div class="col">
+              <button (click)="exportar()" class="btn btn-icon btn-success" type="button">
+                <span class="btn-inner--icon"><i class="ni ni-bold-down"></i></span>
+                <span class="btn-inner--text">Exportar a excel</span>
+              </button>
+
+              <button (click)="exportarConsolidado()" class="btn btn-icon btn-warning" type="button">
+                <span class="btn-inner--icon"><i class="ni ni-bold-down"></i></span>
+                <span class="btn-inner--text">Exportar consolidado</span>
+              </button>
+
+              <div class="recargar float-right">
+                <button (click)="reenviarAll()" title="Reenviar solicitudes para validación"
+                  class="btn btn-icon btn btn-secondary " type="button">
+                  <span class="btn-inner--icon"><i class="fa fa-paper-plane" aria-hidden="true"></i></span>
+                  <span class="btn-inner--text">Reenviar solicitudes</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="container-fluid mt--6">
+      <div class="row">
+        <div class="col">
+          <div class="card">
+            <!-- Card header -->
+            <div class="card-header border-0">
+              <div class="row align-items-center">
+                <div class="col">
+                  <h3 class="mb-0">Solicitudes de bonos</h3>
+                </div>
+
+                <div class="col text-right">
+                  <button title="Recargar" (click)="list(0)" class="btn btn-sm btn-primary">
+                    <span class="btn-inner--icon"><i class="fa fa-refresh" aria-hidden="true"></i></span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Light table -->
+            <div class="table-responsive">
+              <table class="table align-items-center table-flush">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" class="sort" data-sort="budget">Opciones</th>
+                    <th scope="col" class="sort" data-sort="name">Código</th>
+                    <th scope="col" class="sort" data-sort="name">Nombre del bono</th>
+                    <th scope="col" class="sort" data-sort="budget">Nombre empleado</th>
+                    <th scope="col" class="sort" data-sort="budget">Nombre jefe</th>
+                    <th scope="col" class="sort" data-sort="budget">Compañía</th>
+                    <th scope="col" class="sort" data-sort="budget">Fecha de solicitud</th>
+                    <th scope="col" class="sort" data-sort="budget">Estado</th>
+                  </tr>
+                </thead>
+                <tbody class="list">
+                  <tr *ngFor="let item of data">
+                    <td class="text-right">
+                      <div class="dropdown">
+                        <a class="btn btn-sm btn-icon-only text-light" href="#" role="button" data-toggle="dropdown"
+                          aria-haspopup="true" aria-expanded="false">
+                          <i class="fas fa-ellipsis-v"></i>
+                        </a>
+                        <div *ngIf="item.status == 'Pendiente'">
+                          <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                            <button (click)="reenviar(item.id)"
+                              title="Enviar solicitud al email del jefe para validación" class="dropdown-item">Reenviar
+                              solicitud</button>
+                            <button (click)="rechazar(item.id)" title="Rechazar solicitud"
+                              class="dropdown-item">Rechazar solicitud</button>
+                          </div>
+                        </div>
+                        <div *ngIf="item.status != 'Pendiente'">
+                          <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                            <button title="Enviar solicitud al email del jefe para validación" disabled
+                              class="dropdown-item">Reenviar
+                              solicitud</button>
+                            <button title="Rechazar solicitud" disabled class="dropdown-item">Rechazar
+                              solicitud</button>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+
+                    <th scope="row">
+                      <div class="media align-items-center">
+                        <div class="media-body">
+                          <span (click)="ver(item)" data-toggle="modal" data-target="#modal-ver"
+                            class="name ver mb-0 text-sm">
+                            {{ item.id }}
+                          </span>
+                        </div>
+                      </div>
+                    </th>
+
+                    <td>
+                      <span class="badge badge-dot mr-4">
+                        <span class="status">{{ item.bono.nombre }}</span>
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge badge-dot mr-4">
+                        <span class="status">{{ item.empleado.nombre }}</span>
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge badge-dot mr-4">
+                        <span class="status">{{ item.jefe.nombre  }}</span>
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge badge-dot mr-4">
+                        <span class="status">{{ item.empleado.linea.company.nombre }}</span>
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge badge-dot mr-4">
+                        <span class="status">{{ item.fecha_solicitud }}</span>
+                      </span>
+                    </td>
+
+                    <td>
+                      <span *ngIf="item.status == 'Pendiente'" class="badge badge-primary">
+                        {{ item.status }}
+                      </span>
+                      <span *ngIf="item.status == 'Aprobada'" class="badge badge-success">
+                        {{ item.status }}
+                      </span>
+                      <span *ngIf="item.status == 'Rechazada'" class="badge badge-danger">
+                        {{ item.status }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="card-footer py-4">
+              <nav aria-label="...">
+                <ul class="pagination justify-content-end mb-0">
+                  <li class="page-item">
+                    <button (click)="list(prev)" class="page-link" tabindex="-1">
+                      <i class="fas fa-angle-left"></i>
+                      <span class="sr-only">Previous</span>
+                    </button>
+                  </li>
+
+                  <ng-template ngFor let-elemento [ngForOf]="rango" let-index="index">
+
+                    <li *ngIf="index + inicio == current_page" class="page-item active">
+                      <button (click)="list(index + inicio)" class="page-link">
+                        {{ index + inicio }}
+                      </button>
+                    </li>
+
+                    <li *ngIf="index + inicio != current_page" class="page-item">
+                      <button (click)="list(index + inicio)" class="page-link">
+                        {{ index + inicio }}
+                      </button>
+                    </li>
+
+                  </ng-template>
+
+                  <li class="page-item">
+                    <button (click)="list(next)" class="page-link">
+                      <i class="fas fa-angle-right"></i>
+                      <span class="sr-only">Next</span>
+                    </button>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+           <!-- si existen registros -->
+           <div *ngIf="data.length === 0" class="alert alert-primary" role="alert">
+            No existen registrados.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- modal ver -->
+    <div class="row">
+      <div class="col-md-4">
+        <div class="modal ver-bono  fade" id="modal-ver" tabindex="-1" role="dialog" aria-labelledby="modal-default"
+          aria-hidden="true">
+          <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h6 class="modal-title text-primary" id="modal-title-default">
+                  Solicitud # {{ solicitud.id }}
+                </h6>
+                <button type="button" title="Cerrar modal" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+
+              <div class="modal-body">
+
+                <div>
+                  <div class="mt-3 ">
+                    <!-- solicitud  -->
+                    <div class="row mt-3">
+
+                      <div class="col-3">
+                        <div class="form-group">
+                          <label class="form-control-label">Fecha de solicitud</label>
+                          <input type="text" [ngModel]="solicitud.fecha_solicitud"  class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-3">
+
+                        <div class="form-group">
+                          <label class="form-control-label">Fecha de aprobación</label>
+                          <input type="text" [ngModel]="solicitud.fecha_aprobacion"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+
+                      </div>
+
+                      <div class="col-3">
+                        <div class="form-group">
+                          <label class="form-control-label">Fecha de uso</label>
+                          <input type="text" [ngModel]="solicitud.fecha_uso"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-3">
+                        <div class="form-group">
+                          <label class="form-control-label">Estado</label>
+                          <input type="text" [ngModel]="solicitud.status" class="form-control form-control-alternative"
+                            readonly>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-control-label">Observación</label>
+                      <textarea class="form-control" [ngModel]="solicitud.observacion" readonly cols="30"
+                        rows="2"></textarea>
+                    </div>
+
+                    <hr class="my-3" />
+
+                    <!-- empleado  -->
+                    <p class="font-weight-bold ml-1 text-primary">Empleado</p>
+
+                    <div class="row mt-3">
+
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Cédula</label>
+                          <input type="email" [ngModel]="solicitud.empleado.cedula"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-2">
+
+                        <div class="form-group">
+                          <label class="form-control-label">Nombre</label>
+                          <input type="email" [ngModel]="solicitud.empleado.nombre"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+
+                      </div>
+
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Email</label>
+                          <input type="email" [ngModel]="solicitud.empleado.email"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Celular</label>
+                          <input type="email" [ngModel]="solicitud.empleado.celular"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Email personal</label>
+                          <input type="email" [ngModel]="solicitud.empleado.email_personal"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Celular personal</label>
+                          <input type="email" [ngModel]="solicitud.empleado.celular_personal"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+
+                    </div>
+
+                    <div class="row mt-3">
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Compañia</label>
+                          <input type="email" [ngModel]="solicitud.empleado.linea.company.nombre"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Línea</label>
+                          <input type="email" [ngModel]="solicitud.empleado.linea.nombre"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Cargo</label>
+                          <input type="email" [ngModel]="solicitud.empleado.cargo"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Código del cargo</label>
+                          <input type="email" [ngModel]="solicitud.empleado.codigo"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Status</label>
+                          <input type="email" [ngModel]="solicitud.empleado.status"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Fecha de creación</label>
+                          <input type="email" [ngModel]="solicitud.empleado.created_at"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+
+                    </div>
+
+                    <hr class="my-3" />
+                    <!-- bono -->
+                    <p class="font-weight-bold ml-1 text-primary">Bono</p>
+
+
+                    <div class="row mt-3">
+
+                      <div class="col-3">
+                        <div class="form-group">
+                          <label class="form-control-label">Nombre</label>
+                          <input type="email" [ngModel]="solicitud.bono.nombre"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-3">
+
+                        <div class="form-group">
+                          <label class="form-control-label">Beneficio</label>
+                          <input type="email" [ngModel]="solicitud.bono.beneficio"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+
+                      </div>
+
+                      <div class="col-3">
+                        <div class="form-group">
+                          <label class="form-control-label">Cantidad</label>
+                          <input type="email" [ngModel]="solicitud.bono.cantidad"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-3">
+                        <div class="form-group">
+                          <label class="form-control-label">Categoría</label>
+                          <input type="email" [ngModel]="solicitud.bono.categoria"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-control-label">Descripción</label>
+                      <textarea class="form-control" [ngModel]="solicitud.bono.descripcion" readonly cols="30"
+                        rows="2"></textarea>
+                    </div>
+
+                    <hr class="my-3" />
+                    <!-- jefe -->
+                    <p class="font-weight-bold ml-1 text-primary">Jefe</p>
+
+                    <div class="row mt-3">
+
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Cédula</label>
+                          <input type="email" [ngModel]="solicitud.jefe.cedula"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-2">
+
+                        <div class="form-group">
+                          <label class="form-control-label">Nombre</label>
+                          <input type="email" [ngModel]="solicitud.jefe.nombre"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+
+                      </div>
+
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Email</label>
+                          <input type="email" [ngModel]="solicitud.jefe.email"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Celular</label>
+                          <input type="email" [ngModel]="solicitud.jefe.celular"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Email personal</label>
+                          <input type="email" [ngModel]="solicitud.jefe.email_personal"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Celular personal</label>
+                          <input type="email" [ngModel]="solicitud.jefe.celular_personal"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+
+                    </div>
+
+                    <div class="row mt-3">
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Compañia</label>
+                          <input type="email" [ngModel]="solicitud.jefe.linea.company.nombre"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Línea</label>
+                          <input type="email" [ngModel]="solicitud.jefe.linea.nombre"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Cargo</label>
+                          <input type="email" [ngModel]="solicitud.jefe.cargo"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Código del cargo</label>
+                          <input type="email" [ngModel]="solicitud.jefe.codigo"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Status</label>
+                          <input type="email" [ngModel]="solicitud.jefe.status"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+
+                      <div class="col-2">
+                        <div class="form-group">
+                          <label class="form-control-label">Fecha de creación</label>
+                          <input type="email" [ngModel]="solicitud.jefe.created_at"
+                            class="form-control form-control-alternative" readonly>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

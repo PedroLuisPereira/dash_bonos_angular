@@ -1,0 +1,19 @@
+.spinner{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.modal-dialog {
+  max-width: 700px;
+}
+
+.nuevo .modal-dialog {
+  max-width: 900px;
+}
+
+.ver {
+  color: #5E72E4;
+  cursor: pointer;
+}

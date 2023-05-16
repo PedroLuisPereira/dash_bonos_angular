@@ -1,0 +1,27 @@
+.modal-dialog {
+  max-width: 700px;
+}
+
+.nuevo .modal-dialog {
+  max-width: 900px;
+}
+
+
+.ver {
+  color: #5E72E4;
+  cursor: pointer;
+}
+.contenedor{
+  margin-left: 20px;
+  margin-right: 20px;
+  cursor: pointer;
+}
+.card-body{
+  padding: 0.5rem;
+}
+
+@media only screen and (min-width: 1200px) {
+  .col-lg-3 {
+    max-width: 20%;
+  }
+}
